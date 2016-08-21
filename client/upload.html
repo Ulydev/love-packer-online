@@ -1,0 +1,36 @@
+<template name="uploadForm">
+
+  <div class="container">
+
+    {{#animate type="rubberBand" delay="200"}}
+      <h2>Drop some .LÖVE</h2>
+    {{/animate}}
+    {{> dropzone
+      contentType='love'
+      fileTypes='.love'
+      multiple=false
+      callbacks=uploadCallbacks
+    }}
+
+  </div>
+
+</template>
+
+<template name="sharePage">
+
+  <div class="container">
+
+    {{#animate type="bounce" delay="600"}}
+      <h2>You're good to go!</h2>
+    {{/animate}}
+
+    <h3><a href="{{pathFor 'game.show' _id=title }}">Click to play your game</a></h3>
+
+    <h4 class="textbox">or</h4>
+
+    <h3>Share your creation</h3>
+    {{> shareButtons link=(urlFor 'game.show' _id=title)}}
+
+  </div>
+
+</template>

@@ -1,0 +1,1 @@
+width:28;height:40;shieldcount:1;shieldwidth:28;shieldheight:40;ability:bubble;

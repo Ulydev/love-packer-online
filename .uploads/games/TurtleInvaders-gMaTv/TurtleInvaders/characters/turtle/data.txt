@@ -1,0 +1,1 @@
+width:30;height:32;ability:tank;shieldspeed:8;shieldcount:8;shieldwidth:34;shieldheight:34;shieldstopatend:true;

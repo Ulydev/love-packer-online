@@ -1,0 +1,13 @@
+<template name="game">
+  <center>
+    <div>
+      <h1>{{ title }}</h1>
+      <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+      <canvas id="loadingCanvas" oncontextmenu="event.preventDefault()" width="800" height="600"></canvas>
+    </div>
+  </center>
+
+  <script type="text/javascript" src="{{ gameCanvasUrl }}"></script>
+  <script type="text/javascript" src="{{ gameUrl }}"></script>
+  <script async type="text/javascript" src="{{ loveUrl }}"></script>
+</template>

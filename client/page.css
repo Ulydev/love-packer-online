@@ -1,0 +1,88 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  padding-top: 32px;
+}
+
+/* Quicksand */
+@font-face {
+	font-family: 'Quicksand';
+	font-weight: 700;
+	src: url('/fonts/quicksand-bold.woff');
+}
+
+@font-face {
+	font-family: 'Quicksand';
+	font-weight: 400;
+	src: url('/fonts/quicksand-regular.woff');
+}
+
+/* Sofia Pro Light */
+@font-face {
+	font-family: 'Sofia Pro';
+	src: url('/fonts/sofia-pro-light.woff');
+	font-weight: normal;
+}
+
+h1, h2, h3, h4, dt {
+	font-family: Quicksand, sans-serif;
+	color: #25aae1;
+}
+
+h2 {
+  color: #383f4a;
+  margin-bottom: 48px;
+}
+
+hr {
+  border-top: 1px solid #383f4a;
+  border-bottom: 0;
+  width: 250px;
+  margin-top: 0px;
+  margin-bottom: 24px;
+}
+
+.textbox {
+  display: inline-block;
+  width: 100px;
+  height: 36px;
+  border-radius: 4px;
+  background-color: #b1e3fa;
+  text-align: center;
+  line-height: 32px;
+}
+
+.shareButtons a {
+  margin-left: 24px;
+  margin-right: 24px;
+}
+
+body {
+	font-size: 18px;
+	font-family: Sofia Pro, sans-serif;
+	background-color: #e0f4fc;
+}
+
+a {
+  color: #25aae1;
+  text-decoration: none;
+}
+
+a:active {}
+a:link {}
+a:visited {}
+a:hover {
+	color: #ea316e;
+}
+
+.btn {
+  cursor: pointer;
+}
+
+.container {
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+}

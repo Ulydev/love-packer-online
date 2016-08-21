@@ -1,0 +1,32 @@
+<template name="shareButtons">
+  <div class="shareButtons">
+
+    <!-- Facebook -->
+    <a
+      onClick="window.open('https://www.facebook.com/sharer.php?u={{link}}','sharer','toolbar=0,status=0,width=580,height=325');"
+      href="javascript: void(0)"
+      title="Share on Facebook"
+      target="_blank"
+      class="btn btn-facebook"
+    ><i class="fa fa-facebook"></i> Facebook</a>
+
+    <!-- Twitter -->
+    <a
+      onClick="window.open('https://twitter.com/intent/tweet?text=Check%20out%20my%20game%20on%20{{link}}','sharer','toolbar=0,status=0,width=580,height=325');"
+      href="javascript: void(0)"
+      title="Share on Twitter"
+      target="_blank"
+      class="btn btn-twitter"
+    ><i class="fa fa-twitter"></i> Twitter</a>
+
+    <!-- Google+ -->
+    <a
+      onClick="window.open('https://plus.google.com/share?url={{link}}','sharer','toolbar=0,status=0,width=580,height=325');"
+      href="javascript: void(0)"
+      title="Share on Google+"
+      target="_blank"
+      class="btn btn-googleplus"
+    ><i class="fa fa-google-plus"></i> Google+</a>
+
+  </div>
+</template>

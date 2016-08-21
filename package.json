@@ -1,0 +1,18 @@
+{
+  "name": "love-packer",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "meteor-node-stubs": "~0.2.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^6.3.1"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {"browsers": ["last 2 versions"]}
+    }
+  }
+}

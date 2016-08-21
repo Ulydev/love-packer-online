@@ -1,0 +1,1 @@
+width:40;height:40;ability:implode;shieldwidth:50;shieldheight:50;shieldcount:10;shieldspeed:7
