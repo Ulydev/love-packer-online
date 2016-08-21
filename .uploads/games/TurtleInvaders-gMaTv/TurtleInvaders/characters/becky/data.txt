@@ -1,2 +1,0 @@
-width:40;height:40;animated:true;animationframes:3;animationspeed:0.1;ability:bilst;shieldcount:4;shieldspeed:20;shieldwidth:44;shieldheight:44;
-

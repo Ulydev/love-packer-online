@@ -1,2 +1,0 @@
-width:40;height:28;animated:true;animationframes:12;animationspeed:0.1;ability:portal;shieldcount:9;shieldspeed:8;shieldwidth:48;shieldheight:48;
-

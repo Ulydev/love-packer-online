@@ -1,1 +1,0 @@
-width:32;height:32;shieldcount:1;shieldwidth:34;shieldheight:34;ability:rockets;
