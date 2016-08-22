@@ -29,6 +29,8 @@ Meteor.startup(function () {
     uploadDir: uploadDir,
     checkCreateDirectories: false,
     cacheTime: 100,
+    maxPostSize: 60000000,
+    maxFileSize: 50000000,
     getDirectory: function(fileInfo, formData) {
       if (!fileInfo.id) {
         fileInfo.title = fileInfo.name.slice(0, -5);
