@@ -22,6 +22,10 @@ var handle = function (err, stdout, stderr) {
   console.log(stdout);
 };
 
+var escapeShell = function(cmd) {
+  return '' + cmd.replace(/(["\s'$`\\])/g,'\\$1') + '';
+};
+
 Meteor.startup(function () {
 
   var maxSize = 50000000
@@ -56,6 +60,9 @@ Meteor.startup(function () {
       console.log("<---=====--->")
       console.log("fileInfo: ", fileInfo);
       console.log("formFields: ", formFields);
+
+      fileInfo.path = escapeShell(fileInfo.path);
+      console.log(fileInfo.path);
 
       var gamepath = path + "/.uploads/games";
       var gamedir = gamepath + fileInfo.path.slice(0, -5);
