@@ -3,7 +3,7 @@
   <div class="container">
 
     <h2>{{ title }} - <a href="{{ url }}" target="_blank">download</a></h2>
-    {{> shareButtons link=(urlFor 'game.show' _id=title)}}
+    {{> shareButtons title=title}}
     <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
     <canvas id="loadingCanvas" oncontextmenu="event.preventDefault()" width="800" height="600"></canvas>
     <h4 style="margin-top: -24px;">made with <a href="https://github.com/TannerRogalsky/love.js">love.js</a></h4>
