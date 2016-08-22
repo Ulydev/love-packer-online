@@ -24,13 +24,15 @@ var handle = function (err, stdout, stderr) {
 
 Meteor.startup(function () {
 
+  var maxSize = 50000000
+
   UploadServer.init({
     tmpDir: path + "/.uploads/tmp",
     uploadDir: uploadDir,
     checkCreateDirectories: false,
     cacheTime: 100,
-    maxPostSize: 60000000,
-    maxFileSize: 50000000,
+    maxPostSize: maxSize + 10000000,
+    maxFileSize: maxSize,
     getDirectory: function(fileInfo, formData) {
       if (!fileInfo.id) {
         fileInfo.title = fileInfo.name.slice(0, -5);
@@ -38,9 +40,22 @@ Meteor.startup(function () {
       }
       return "/" + fileInfo.id + "/";
     },
+    validateRequest: function(req) {
+      if (req.headers["content-length"] > maxSize)
+        return "File too big";
+      return null;
+    },
+    validateFile: function(file, req) {
+      if ((!file) || (file.name && file.name.length < 3 + 5) || (!file.name))
+        return "Game name must be more than 3 characters long";
+      if (file.name.slice(-5) != '.love')
+        return "Not a .love file";
+      return null;
+    },
     finished: function(fileInfo, formFields) {
-      console.log("upload finished, fileInfo ", fileInfo);
-      console.log("upload finished, formFields: ", formFields);
+      console.log("<---=====--->")
+      console.log("fileInfo: ", fileInfo);
+      console.log("formFields: ", formFields);
 
       var gamepath = path + "/.uploads/games";
       var gamedir = gamepath + fileInfo.path.slice(0, -5);
@@ -64,6 +79,7 @@ Meteor.startup(function () {
         });
       });
 
+      fileInfo.lastUpdated = new Date();
       Uploads.insert(fileInfo);
     },
     cacheTime: 100,

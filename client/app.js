@@ -16,3 +16,5 @@ Transitioner.default({
   in: 'transition.fadeInRight',
   out: 'transition.fadeOutLeft'
 });
+
+Notifications.defaultOptions.timeout = 4000;

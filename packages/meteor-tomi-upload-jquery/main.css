@@ -1,0 +1,107 @@
+/* SEMANTIC UI */
+
+.progressOuter {
+    display: table-cell; width: 100%; vertical-align: top
+}
+
+.progressInner {
+    height: 33px;
+}
+
+.semantic.progressInner {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(39, 41, 43, 0.15);
+    box-shadow: none;
+    display: block;
+    max-width: 100%;
+    padding: 0.2857em;
+    position: relative;
+    height: 36px;
+}
+
+.semantic.progressInner .bar {
+    animation: 0s ease 0s normal none 1 running none !important;
+    background-color: #5bbd72 !important;
+    height: 1.75em;
+    background: none repeat scroll 0 0 #888;
+    border-radius: 0.2857rem;
+    display: block;
+    line-height: 1;
+    position: relative;
+    transition: width 0.3s ease 0s, background-color 0.3s ease 0s;
+    width: 0;
+}
+
+.rightButton {
+    float: right;
+    margin-left: 3px!important;
+}
+
+/* Bootstrap */
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.uploadPanel {
+    display: table;
+}
+
+.uploadPanel li {
+    display: table-cell;
+}
+
+.uploadPanel .btn {
+    display: table-cell; width: 1%;
+}
+
+.uploadPanel .upload-control:first-child {
+    border-radius: 5px 0 0 5px;
+}
+
+.uploadPanel .upload-control:last-child {
+    border-radius: 0 5px 5px 0;
+}
+
+.uploadPanel .form-control {
+    border-radius: 0px;
+    padding: 0px;
+    position: relative
+}
+
+.uploadPanel .progress{
+    border-radius: 0px;
+}
+
+.progress-label {
+    position: absolute;
+    width: 100%;
+    top: 6px;
+    text-align: center
+}
+
+.leftButton,
+.rightButton {
+    margin: 0px;
+    display: table-cell;
+}
+
+.rightButton {
+    width: 130px;
+}

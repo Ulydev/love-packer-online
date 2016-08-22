@@ -14,7 +14,7 @@ SyncedCron.add({
   	targetDate.setMinutes(0);
   	targetDate.setSeconds(0);
 
-    var cursor = Uploads.find({createdAt: {$lt: targetDate}});
+    var cursor = Uploads.find({lastUpdated: {$lt: targetDate}});
     cursor.forEach(function(doc){
       exec('rm -rf /.uploads/games/' + doc.id);
     });

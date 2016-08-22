@@ -11,6 +11,11 @@ body {
   overflow: visible;
 }
 
+ul.notifications {
+  width: 300px;
+  position: fixed;
+}
+
 /* Quicksand */
 @font-face {
 	font-family: 'Quicksand';
