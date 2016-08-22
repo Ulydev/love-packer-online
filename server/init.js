@@ -36,7 +36,7 @@ Meteor.startup(function () {
     getDirectory: function(fileInfo, formData) {
       if (!fileInfo.id) {
         fileInfo.title = fileInfo.name.slice(0, -5);
-        fileInfo.id = fileInfo.title.replace(/[^\w\s]/gi, '') + "-" + generateId();
+        fileInfo.id = fileInfo.title.replace(/[^A-Z0-9]/ig, "") + "-" + generateId();
       }
       return "/" + fileInfo.id + "/";
     },
