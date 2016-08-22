@@ -1,14 +1,20 @@
 <template name="404">
-  <div class="ui middle aligned center aligned grid">
-    <div class="column center aligned centered">
+
+  <div class="container">
 
       <h2>Oops!</h2>
-      {{#if title}}
-        <h3>The game "{{ title }}" doesn't exist.</h3>
-      {{else}}
-        <h3>You've reached a wrong URL.</h3>
-      {{/if}}
+      <h3>You've reached a wrong URL.</h3>
 
-    </div>
   </div>
+
+</template>
+
+<template name="loading">
+
+  <div class="container">
+
+      <h2>Preparing game "{{ title }}"</h2>
+
+  </div>
+
 </template>

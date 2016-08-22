@@ -24,7 +24,7 @@ Router.route("share/:_id", function () {
 Router.route("game/:_id", function () {
   var game = Uploads.findOne({ id: this.params._id });
   if (!game) {
-    this.render("404", {
+    this.render("loading", {
       data: function () {
         return {
           title: this.params._id

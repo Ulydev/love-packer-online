@@ -42,22 +42,25 @@ Meteor.startup(function () {
 
       var gamepath = path + "/.uploads/games";
       var gamedir = gamepath + fileInfo.path.slice(0, -5);
+      var gamedata = gamepath + fileInfo.subDirectory + "game.data";
+      var relativegamedata = "\\/upload\\/" + fileInfo.id + "\\/game.data";
+      var gamejs = gamepath + fileInfo.subDirectory + "game.js";
 
       var command = "python " + path + "/.lovejs/emscripten/tools/file_packager.py ";
-      command += gamepath + fileInfo.subDirectory + "game.data ";
-      command += "--preload " + gamedir + "@/ --js-output=" + gamepath + fileInfo.subDirectory + "game.js"
+      command += gamedata + " ";
+      command += "--preload " + gamedir + "/@/ --js-output=" + gamejs;
 
       exec("unzip " + gamepath + fileInfo.path + " -d " + gamedir, () => {
         console.log("Unzipped file");
-        exec(command, handle);
-        console.log("Generated game");
+        exec(command, () => {
+          console.log("Generated game");
+          exec("rm -rf " + gamedir, handle);
+          console.log("Deleted tmp folder");
+          exec("sed -i -e "
+          + "'/var PACKAGE_NAME/s/.*/var PACKAGE_NAME = \"" + relativegamedata + "\"\;/;"
+          + "/var REMOTE_PACKAGE_BASE/s/.*/var REMOTE_PACKAGE_BASE = \"" + relativegamedata + "\"\;/' " + gamejs, handle);
+        });
       });
-      /*
-      exec("rm -rf " + gamedir, handle);
-      console.log("Deleted tmp folder");
-      */
-
-
 
       Uploads.insert(fileInfo);
     },
