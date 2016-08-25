@@ -1,18 +1,18 @@
 <template name="uploadForm">
 
-  <div class="container">
-
-    {{#animate type="rubberBand" delay="200"}}
-      <h2>Drop some .LÖVE <span style="font-size: 12px;">(&lt;40mb)</span></h2>
-    {{/animate}}
-    {{> dropzone
-      contentType='love'
-      fileTypes='.love'
-      multiple=false
-      callbacks=uploadCallbacks
-    }}
-
+  {{#animate type="rubberBand" delay="200"}}
+    <h2>Drop some .LÖVE <span style="font-size: 12px;">(&lt;40mb)</span></h2>
+  {{/animate}}
+  <div class="publicForm" style="margin-bottom: 12px;">
+    <input id="isprivate" style="height: 14px;" name="isprivate" type="checkbox">
+    <label for="isprivate">Private</label>
   </div>
+  {{> dropzone
+    contentType='love'
+    fileTypes='.love'
+    multiple=false
+    callbacks=uploadCallbacks
+  }}
 
 </template>
 

@@ -6,7 +6,7 @@ Router.configure({
 })
 
 Router.route('/', function () {
-  this.render('uploadForm');
+  this.render('home');
 });
 
 Router.route("share/:_id", function () {
@@ -34,7 +34,7 @@ Router.route("game/:_id", function () {
   } else {
     this.render("game", {
       data: function () {
-        return Uploads.findOne({ id: this.params._id });
+        return game;
       }
     });
   }

@@ -23,3 +23,33 @@ SyncedCron.add({
   	Uploads.remove({createdAt: {$lt: targetDate}});
   }
 });
+
+Meteor.methods({
+
+  viewGame: function (id) {
+    console.log("updating game " + id);
+    Uploads.update({ id: id }, {
+      $inc: {
+        views: 1
+      },
+      $set: {
+        lastUpdated: new Date()
+      }
+    });
+  }
+
+});
+
+Meteor.publish('recent', function(limit) {
+  return Uploads.find({ private: false }, {
+    limit: limit || 5,
+    sort: { createdAt: -1 }
+  });
+});
+
+Meteor.publish('popular', function(limit) {
+  return Uploads.find({ private: false }, {
+    limit: limit || 5,
+    sort: { views: -1 }
+  });
+});

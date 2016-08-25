@@ -11,3 +11,7 @@ Template.game.helpers({
     return "/love.js";
   }
 });
+
+Template.game.onRendered(function () {
+  Meteor.call('viewGame', this.data.id);
+});

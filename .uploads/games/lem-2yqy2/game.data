@@ -1,0 +1,212 @@
+-- lem.lua v0.1
+
+-- Copyright (c) 2015 Ulysse Ramage
+-- Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+-- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+local lem = {}
+lem.__index = lem
+
+function lem:new()
+  local _manager = {}
+  setmetatable(_manager, lem)
+
+  _manager.handlers = {}
+
+  return _manager
+end
+
+--[[ Private ]]--
+
+function lem:eventExists(eventname)
+  return self.handlers[eventname] and true or false
+end
+
+function lem:getHandlers(eventname)
+  return self.handlers[eventname]
+end
+
+function lem:initHandlers(eventname)
+  self.handlers[eventname] = {}
+end
+
+function lem:registerHandler(eventname, callback)
+  table.insert(self.handlers[eventname], callback)
+end
+
+--[[ Public ]]--
+
+function lem:on(eventname, callback)
+  if not self:eventExists(eventname) then self:initHandlers(eventname) end
+  self:registerHandler(eventname, callback)
+  return self
+end
+
+function lem:emit(eventname, params)
+  if not self:eventExists(eventname) then return self end
+  for k, v in pairs(self:getHandlers(eventname)) do --v = callback
+    v(params)
+  end
+  return self
+end
+
+function lem:remove(eventname, callback)
+  if not self:eventExists(eventname) then return self end
+  for k, v in pairs(self:getHandlers(eventname)) do
+    if v == callback then
+      self.handlers[eventname][k] = nil
+    end
+  end
+  return self
+end
+
+function lem:reset(eventname)
+  if not self:eventExists(eventname) then return self end
+  self:initHandlers(eventname)
+  return self
+end
+
+function lem:getListenerCount(eventname)
+  return (self:eventExists(eventname) and #self:getHandlers(eventname) or -1)
+end
+
+--[[ Aliases ]]--
+
+function lem:addListener(...) return self:on(...) end
+function lem:removeListener(...) return self:remove(...) end
+function lem:removeListeners(...) return self:reset(...) end
+
+--[[ End ]]--
+
+return lemThe MIT License (MIT)
+
+Copyright (c) 2015 Ulydev
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+io.stdout:setvbuf'no' 
+
+love.window.setTitle("Press Space to emit event, Escape to remove event")
+
+event = require "lem" --require the library
+
+local function sayMessage (params)
+  print(params.author.." says: "..params.message)
+end
+
+manager = event
+:new() --create new event manager
+:on('say', sayMessage) --register event
+
+function love.keypressed(key)
+  
+  if key == "space" then
+    manager:emit('say', { --emit event
+      author = "System",
+      message = "I've just been asked to say something!"
+    })
+  elseif key == "escape" and manager:getListenerCount('say') > 0 then
+    manager:remove('say', sayMessage)
+    print("I won't listen to events anymore.")
+  end
+  
+endlem
+==============
+
+lem is a simple event manager library that allows you to register and trigger events in your game / application.
+
+It works the same way as NodeJS's EventEmitter.
+
+Setup
+----------------
+
+```lua
+local event = require "lem" --require the library
+```
+
+Usage
+----------------
+
+Create an event manager
+```lua
+local myEventManager = event:new()
+```
+
+Register an event listener
+```lua
+myEventManager:on('start', function ()
+  print("Starting game")
+end)
+```
+
+Emit an event
+```lua
+myEventManager:emit('start')
+```
+
+You can also pass parameters in a table:
+```lua
+myEventManager:on('say', function (params)
+  print(params.message)
+end)
+
+myEventManager:emit('say', { message = "Hi!" })
+```
+
+Chaining functions
+----------------
+
+The **event manager** object is passed through most of the methods. This allows you to chain function calls like so:
+```lua
+manager = event
+:new()
+:on('event1', function () print("event 1") end)
+:on('event2', function () print("event 2") end)
+```
+
+Methods and aliases
+----------------
+
+Register an event listener
+```lua
+lem:on(eventname, callback)
+//-> lem:addEventListener
+```
+
+Emit an event
+```lua
+lem:emit(eventname, params)
+```
+
+Remove an event listener
+```lua
+lem:remove(eventname, callback)
+//-> lem:removeEventListener
+```
+
+Remove all listeners of a specific event
+```lua
+lem:reset(eventname)
+//-> lem:removeEventListeners
+```
+
+Get total count of listeners
+```lua
+lem:getListenerCount(eventname)
+```

@@ -20,6 +20,9 @@ Template.uploadForm.helpers({
       finished: function (index, fileInfo, context) {
         Notifications.success("Success", "Uploaded " + fileInfo.id, {});
         Router.go('game.share', { _id: fileInfo.id });
+      },
+      formData: function () {
+        return { private: document.getElementById("isprivate").checked }
       }
     };
   }

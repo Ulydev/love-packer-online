@@ -95,6 +95,18 @@ a:hover {
   height: 100%;
 }
 
+.divided {
+  display: block;
+  width: 75%;
+  margin: auto;
+}
+
+.divided td {
+  width: 200px;
+  display: inline-block;
+  margin: auto;
+}
+
 #canvas, #loadingCanvas {
   margin: auto;
   border-width: 10px;

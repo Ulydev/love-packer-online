@@ -56,10 +56,10 @@ Meteor.startup(function () {
         return "Not a .love file";
       return null;
     },
-    finished: function(fileInfo, formFields) {
+    finished: function(fileInfo, formData) {
       console.log("<---=====--->")
       console.log("fileInfo: ", fileInfo);
-      console.log("formFields: ", formFields);
+      console.log("formData: ", formData);
 
       fileInfo.path = escapeShell(fileInfo.path);
       console.log(fileInfo.path);
@@ -86,7 +86,12 @@ Meteor.startup(function () {
         });
       });
 
-      fileInfo.lastUpdated = new Date();
+      fileInfo.views = 0;
+
+      var date = new Date();
+      fileInfo.createdAt = date;
+      fileInfo.lastUpdated = date;
+      fileInfo.private = formData.private == 'false' ? false : true;
       Uploads.insert(fileInfo);
     },
     cacheTime: 100,

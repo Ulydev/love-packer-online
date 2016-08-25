@@ -18,3 +18,8 @@ Transitioner.default({
 });
 
 Notifications.defaultOptions.timeout = 4000;
+
+Meteor.subscribe('recent', 6);
+Meteor.subscribe('popular', 6);
+
+Blaze._allowJavascriptUrls();

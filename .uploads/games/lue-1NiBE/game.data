@@ -1,0 +1,368 @@
+The MIT License (MIT)
+
+Copyright (c) 2015 Ulydev
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-- lue.lua v0.1
+
+-- Copyright (c) 2016 Ulysse Ramage
+-- Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+-- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+local lue, lueObject = {
+  hue = 0,
+  intensity = 0,
+  speed = 50,
+  c = {}
+}, {}
+
+setmetatable(lue, lue)
+
+--[[ Private ]]--
+
+local function lerp(a, b, k) --smooth transitions
+  if a == b then
+    return a
+  else
+    if math.abs(a-b) < 0.005 then return b else return a * (1-k) + b * k end
+  end
+end
+
+local function HSL(h, s, l, a) --where the magic happens
+  if s<=0 then return l,l,l,a end
+  h, s, l = (h%255)/256*6, s/255, l/255
+  local c = (1-math.abs(2*l-1))*s
+  local x = (1-math.abs(h%2-1))*c
+  local m,r,g,b = (l-.5*c), 0,0,0
+  if h < 1     then r,g,b = c,x,0
+  elseif h < 2 then r,g,b = x,c,0
+  elseif h < 3 then r,g,b = 0,c,x
+  elseif h < 4 then r,g,b = 0,x,c
+  elseif h < 5 then r,g,b = x,0,c
+  else              r,g,b = c,0,x
+  end return {(r+m)*255, (g+m)*255, (b+m)*255, a}
+end
+
+--[[ Public ]]--
+
+function lue:update(dt)
+  
+  self.hue = self.hue + self.speed * dt
+  if self.hue > 255 then
+    self.hue = self.hue - 255
+  elseif self.hue < 0 then
+    self.hue = self.hue + 255
+  end
+  
+  for k, v in pairs(self.c) do
+    v:update(dt)
+  end
+
+end
+
+function lueObject:update(dt)
+  
+  if self.target then
+    local type, target = self.target.type, self.target.color
+    if type == "hue" then
+      target = lue:getHueColor(unpack(target))
+    end
+    for i = 1, 4 do
+      self.color[i] = lerp(self.color[i] or 255, target[i] or 255, self.speed * dt)
+    end
+  elseif self.hue then
+    self.color = lue:getHueColor(unpack(self.hue))
+  end
+  
+end
+
+--
+
+function lue:initColor(name, f)
+  
+  if not self.c[name] then self.c[name] = lue:newColor(f) end
+  
+end
+
+function lue:newColor(f)
+  
+  local _object = {}
+  
+  setmetatable(_object, { __index = lueObject })
+  
+  return _object
+end
+
+function lue:setColor(name, f)
+  
+  self:initColor(name)
+  
+  return self.c[name]:setColor(f)
+  
+end
+
+function lueObject:setColor(f)
+  
+  if not (f.color or f.speed or f.hue) then f = { color = f } end --mind blown
+  
+  f.speed = f.speed and (f.speed == true and 1 or f.speed) or false
+  
+  if f.speed and self.color then
+    self.target = { type = f.hue and "hue" or "color", color = f.color or f.hue }
+    self.speed = f.speed
+  else
+    self.color = f.color or lue:getHueColor(unpack(f.hue))
+    if f.hue then self.hue = f.hue end
+  end
+  
+  return self
+  
+end
+
+function lue:getColor(name, target)
+  
+  return self.c[name] and self.c[name]:getColor(target) or false
+  
+end
+
+function lueObject:getColor(target)
+  
+  local color = ((target and self.target) and self.target or self.color)
+  return color and {color[1], color[2], color[3], color[4] or 255} or false
+  
+end
+
+--
+
+function lue:setHueIntensity(intensity)
+  self.intensity = intensity
+  return self
+end
+
+function lue:setHueSpeed(speed)
+  self.speed = speed
+  return self
+end
+
+--
+
+function lue:getHueColor(s, l, a, offset)
+  local _s, _l = math.min(math.max(0, s+self.intensity), 255), math.min(math.max(0, l+self.intensity), 255)
+  return HSL(self.hue + (offset or 0), _s, _l, a)
+end
+
+function lue:getHueIntensity() return self.intensity end
+
+function lue:getHueSpeed() return self.speed end
+
+function lue:getHue() return self.hue end
+
+--[[ End ]]--
+
+return lueio.stdout:setvbuf'no' 
+
+lue = require "lue" --require the library
+
+function love.load()
+  
+  font = {
+    small = love.graphics.newFont(14),
+    big = love.graphics.newFont(64)
+  }
+  
+  objects = {}
+  
+  love.window.setTitle("Press space")
+  
+end
+
+function love.update(dt)
+  
+  lue:update(dt)
+  
+  for i = #objects, 1, -1 do
+    local o = objects[i]
+    o.color:update(dt)
+    o.x, o.y = o.x + o.speed.x * dt, o.y + o.speed.y * dt
+    if o.x < -300 or o.x > love.graphics.getWidth()+300 or o.y < -300 or o.y > love.graphics.getHeight()+300 then
+      table.remove(objects, i)
+    end
+  end
+  
+end
+
+function love.draw()
+  
+  love.graphics.setBackgroundColor(lue:getHueColor(80, 50))
+  
+  for i = 1, #objects do
+    local o = objects[i]
+    love.graphics.setColor(o.color:getColor())
+    print(o.color:getColor()[4])
+    love.graphics.rectangle("fill", o.x-50, o.y-50, 100, 100)
+  end
+  
+end
+
+function love.keypressed(key, scancode, isrepeat)
+  if key == "space" then
+    
+    local hue = math.random() > .5
+    local params1 = {}
+    local params2 = { speed = 1 }
+    if hue then
+      params1.hue = {255, 100, 255}
+      params2.hue = {255, 100, 0}
+    else
+      params1.color = {255, 255, 255}
+      params2.color = {255, 255, 255, 0}
+    end
+    
+    local object = {
+      x = -100,
+      y = love.graphics.getHeight()*.5,
+      speed = {
+        x = 1000,
+        y = 0
+      },
+      color = lue
+        :newColor() --create new color
+        :setColor(params1) --set it to white
+        :setColor(params2) --and fade it
+    }
+    table.insert(objects, object)
+    
+  end
+endlue
+==============
+
+lue is a LÖVE library that allows you to manage your colors and display hue effects in your game.
+
+![swotch][swotch]
+
+See [HSL](https://en.wikipedia.org/wiki/HSL_and_HSV)
+
+Setup
+----------------
+
+```lua
+local lue = require "lue" --require the library
+```
+
+Usage
+----------------
+
+Set color
+```lua
+function love.load()
+  lue:setColor("my-color", {255, 255, 255})
+end
+```
+
+Update lue
+```lua
+function love.update(dt)
+  lue:update(dt)
+end
+```
+
+Get color
+```lua
+function love.draw()
+  love.graphics.setColor( lue:getColor("my-color") )
+end
+```
+
+Color objects
+----------------
+
+You might also declare color objects instead of calling lue:setColor("colorname", color)
+
+For instance,
+```lua
+function love.load()
+  myColor = lue:newColor():setColor({255, 255, 255}) --methods can be chained
+end
+
+function love.update(dt)
+  myColor:update(dt)
+end
+
+function love.draw()
+  love.graphics.setColor( myColor:getColor() )
+end
+```
+
+Methods
+----------------
+
+Update lue
+```lua
+lue:update(dt)
+```
+
+Set color
+```lua
+lue:setColor("name", {colorTable}) --basic
+lue:setColor("name", {
+
+  color = colorTable,
+  --[[ or ]]--
+  hue = hueTable -- {saturation, lightness, opacity, offset}
+  
+  
+  
+  speed = number, --if provided, color with transition smoothly
+  
+})
+
+--the same goes for myColor:setColor(...), just remove the "name" argument
+```
+
+Get color - if target == true, then the function will return the target color instead of the current color
+```lua
+lue:getColor("name", target)
+myColor:getColor(target)
+```
+
+Get hue color - offset defaults to 0
+```lua
+lue:getHueColor(saturation, lightness, opacity, offset)
+```
+All values range from **0** to **255**.
+
+Set/get the global color intensity of lue - useful for spontaneous color effects such as explosions
+```lua
+lue:setIntensity(intensity)
+lue:getIntensity()
+```
+
+Set/get hue speed
+```lua
+lue:setSpeed(speed)
+lue:getSpeed()
+```
+
+Get the current hue value (0-255)
+```lua
+lue:getHue()
+```
+
+[swotch]: https://media.giphy.com/media/l4HnRFyvYjzzutu2Q/giphy.gif

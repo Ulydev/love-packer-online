@@ -1,0 +1,26 @@
+<template name="showcase">
+
+  {{#animate type="rubberBand" delay="1000"}}
+    <h2 style="margin-top: 48px; margin-bottom: 16px;">Browse</h2>
+  {{/animate}}
+
+  <tr class="divided" style="line-height: 28px;">
+    <td>
+
+      <h3>Recent</h3>
+      {{#each recent}}
+        <a href="{{pathFor 'game.show' _id=id }}">{{ title }}<span style='font-size: 12px;'>-{{ slice id }}</span></a><br/>
+      {{/each}}
+
+    </td>
+    <td>
+
+    <h3>Popular</h3>
+    {{#each popular}}
+      <a href="{{pathFor 'game.show' _id=id }}">{{ title }}<span style='font-size: 12px;'>-{{ slice id }}</span></a><br/>
+    {{/each}}
+
+    </td>
+  </tr>
+
+</template>

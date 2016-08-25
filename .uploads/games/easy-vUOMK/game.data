@@ -1,0 +1,215 @@
+-- easy.lua v0.1
+
+-- Copyright (c) 2016 Ulysse Ramage
+-- Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+-- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+local easy = {}
+
+local default = {
+  quad    = "x * x",
+  cubic   = "x * x * x",
+  quart   = "x * x * x * x",
+  quint   = "x * x * x * x * x",
+  expo    = "2 ^ (10 * (x - 1))",
+  sine    = "-math.cos(x * (math.pi * .5)) + 1",
+  circ    = "-(math.sqrt(1 - (x * x)) - 1)",
+  back    = "x * x * (2.7 * x - 1.7)",
+  elastic = "-(2^(10 * (x - 1)) * math.sin((x - 1.075) * (math.pi * 2) / .3))"
+}
+
+local func = {}
+
+local function makefunc(str, expr)
+  local load = loadstring or load
+  return load("return function(x) " .. str:gsub("%$e", expr) .. " end")()
+end
+
+local function generateEase(name, f)
+  func[name .. "in"] = makefunc("return $e", f)
+  func[name .. "out"] = makefunc([[
+    x = 1 - x
+    return 1 - ($e)
+  ]], f)
+  func[name .. "inout"] = makefunc([[
+    x = x * 2
+    if x < 1 then
+      return .5 * ($e)
+    else
+      x = 2 - x
+      return .5 * (1 - ($e)) + .5
+    end 
+  ]], f)
+end
+
+function easy:get(name, value)
+  if not func[name] then name = name .. "in" end
+  assert(func[name] ~= nil, "Function doesn't exist")
+  return func[name](value)
+end
+
+function easy:add(name, f)
+  assert(func[name] == nil, "Function already exists")
+  return generateEase(name, f)
+end
+
+--all credits to rxi
+
+for k, v in pairs(default) do
+  generateEase(k, v)
+end
+
+--shortcut to easy:get
+
+setmetatable(easy, { __call = easy.get })
+
+return easy
+The MIT License (MIT)
+
+Copyright (c) 2016 Ulydev
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+io.stdout:setvbuf'no' 
+
+ease = require "easy" --require the library
+
+value = 0
+
+function love.load()
+  
+  love.graphics.setNewFont(18)
+  
+  ease:add("linear", "x")
+  
+end
+
+function love.update(dt)
+  
+  value = (value + dt) % 1
+  
+end
+
+function drawLine(easing, x, y, width, height, length)
+  
+  local segments = 48
+  
+  local vertices = {}
+  
+  for i = 1, segments*2, 2 do
+    
+    local tmp = length / segments * (i - 1) / 2
+    
+    vertices[i] = x + tmp * width
+    vertices[i + 1] = y - ease(easing, tmp) * height
+    
+  end
+  
+  love.graphics.line(vertices)
+  
+end
+
+function love.draw()
+  
+  local width, height = love.graphics.getDimensions()
+  local x, y = value
+  
+  love.graphics.setPointSize(10)
+  
+  y = ease("linear", value)
+  love.graphics.points( width*.1 + x * (width*.3), height*.4 - y * (height*.3) )
+  love.graphics.printf("linear", 0, height*.4+12, width*.5, "center")
+  drawLine("linear", width*.1, height*.4, width*.3, height*.3, x)
+  
+  y = ease("circinout", value)
+  love.graphics.points( width*.6 + x * (width*.3), height*.4 - y * (height*.3) )
+  love.graphics.printf("circinout", width*.5, height*.4+12, width*.5, "center")
+  drawLine("circinout", width*.6, height*.4, width*.3, height*.3, x)
+  
+  y = ease("quintin", value)
+  love.graphics.points( width*.1 + x * (width*.3), height*.9 - y * (height*.3) )
+  love.graphics.printf("quintin", 0, height*.9+12, width*.5, "center")
+  drawLine("quintin", width*.1, height*.9, width*.3, height*.3, x)
+  
+  y = ease("elasticout", value)
+  love.graphics.points( width*.6 + x * (width*.3), height*.9 - y * (height*.3) )
+  love.graphics.printf("elasticout", width*.5, height*.9+12, width*.5, "center")
+  drawLine("elasticout", width*.6, height*.9, width*.3, height*.3, x)
+  
+end
+easy
+==============
+
+easy is a minimalist LÖVE library that eases values ranging from 0 to 1.
+
+<img src="http://img4.hostingpics.net/pics/447735out.gif" alt="demo" width="540"/>
+
+Setup
+----------------
+
+```lua
+local ease = require "easy" --require the library
+```
+
+Usage
+----------------
+
+Get converted value (0-1)
+```lua
+converted = ease("elasticin", value)
+```
+
+Methods and aliases
+----------------
+
+Ease
+```lua
+ease(type, value)
+//->ease:get(...)
+```
+
+Add easing function
+```lua
+ease:add(name, string)
+```
+string is a mathematical expression that takes a parameter called "x"
+for instance, "x * x + math.sqrt(x)"
+
+Easing types
+----------------
+
+**quad**
+
+**cubic**
+
+**quart**
+
+**quint**
+
+**expo**
+
+**sine**
+
+**circ**
+
+**back**
+
+**elastic**
+
+Add either "in" - "out" - "inout" at the end of each easing type
