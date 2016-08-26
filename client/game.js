@@ -12,6 +12,18 @@ Template.game.helpers({
   }
 });
 
+Template.game.events({
+  'click .fullscreen': function () {
+    var el = document.getElementById('canvas');
+
+    if(el.webkitRequestFullScreen) {
+      el.webkitRequestFullScreen();
+    } else {
+      el.mozRequestFullScreen();
+    }
+  }
+});
+
 Template.game.onRendered(function () {
   Meteor.call('viewGame', this.data.id);
 });

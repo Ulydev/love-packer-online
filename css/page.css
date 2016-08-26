@@ -97,12 +97,12 @@ a:hover {
 
 .divided {
   display: block;
-  width: 75%;
+  width: 100%;
   margin: auto;
 }
 
 .divided td {
-  width: 200px;
+  width: 320px;
   display: inline-block;
   margin: auto;
 }
