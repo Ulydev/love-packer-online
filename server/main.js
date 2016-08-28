@@ -53,3 +53,7 @@ Meteor.publish('popular', function(limit) {
     sort: { views: -1 }
   });
 });
+
+Meteor.publish("game", function(id) {
+  return Uploads.find({ id: id });
+})

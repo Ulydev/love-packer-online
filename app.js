@@ -21,23 +21,30 @@ Router.route("share/:_id", function () {
   name: 'game.share'
 });
 
-Router.route("game/:_id", function () {
-  var game = Uploads.findOne({ id: this.params._id });
-  if (!game) {
-    this.render("loading", {
-      data: function () {
-        return {
-          title: this.params._id
+Router.route("game/:_id", {
+
+  subscriptions: function() {
+    return Meteor.subscribe('game', this.params._id);
+  },
+
+  action: function () {
+    if (this.ready()) {
+      this.render("game", {
+        data: function () {
+          return Uploads.findOne({ id: this.params._id });
         }
-      }
-    });
-  } else {
-    this.render("game", {
-      data: function () {
-        return game;
-      }
-    });
-  }
-}, {
+      })
+    } else {
+      this.render("loading", {
+        data: function () {
+          return {
+            title: this.params._id
+          }
+        }
+      });
+    }
+  },
+
   name: 'game.show'
+
 });
